@@ -17,12 +17,10 @@ int socket(int domain, int type, int protocol)
   char *cong_algorithm = "bbr";
   int slen = strlen(cong_algorithm);
 
-  /* if the original function is NULL, try to resolve it or break */
+  /* call original function with parameters */
   if(!orig_socket && !(*(void **)(&orig_socket) = dlsym(RTLD_NEXT, "socket"))) {
     errno = EACCES;
   }
-
-  /* call original function with parameters */
   sockfd = (*orig_socket)(domain, type, protocol);
 
   /* socket must be TCP */

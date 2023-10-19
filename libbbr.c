@@ -15,7 +15,7 @@ int socket(int domain, int type, int protocol)
   static int (*orig_socket)(int, int, int) = NULL;
   int sockfd = -1;
   char *cong_algorithm = "bbr";
-  int slen = strlen(cong_algorithm) + 1;
+  int slen = strlen(cong_algorithm);
 
   /* if the original function is NULL, try to resolve it or break */
   if(!orig_socket && !(*(void **)(&orig_socket) = dlsym(RTLD_NEXT, "socket"))) {
@@ -25,10 +25,12 @@ int socket(int domain, int type, int protocol)
   /* call original function with parameters */
   sockfd = (*orig_socket)(domain, type, protocol);
 
-  /* set BBR */
-  if (setsockopt(sockfd, IPPROTO_TCP, TCP_CONGESTION, cong_algorithm, slen)<0) {
-    dlerror();
+  /* socket must be TCP */
+  if((type==SOCK_STREAM)) {
+    /* set BBR */
+    if (setsockopt(sockfd, IPPROTO_TCP, TCP_CONGESTION, cong_algorithm, slen)<0) {
+      dlerror();
+    }
   }
-
   return sockfd;
 }

@@ -13,7 +13,6 @@ A Linux-based experimental LD_PRELOAD library to enable TCP BBR per-process
 ```
 [root@foo bbr-preload]# LD_PRELOAD=./libbbr.so strace -e trace=network curl -I www.google.com
 socket(AF_INET6, SOCK_DGRAM, IPPROTO_IP) = 3
-setsockopt(3, SOL_TCP, TCP_CONGESTION, [7496290], 4) = -1 ENOPROTOOPT (Protocol not available)
 socket(AF_INET, SOCK_STREAM, IPPROTO_TCP) = 3
 setsockopt(3, SOL_TCP, TCP_CONGESTION, [7496290], 4) = 0
 setsockopt(3, SOL_TCP, TCP_NODELAY, [1], 4) = 0

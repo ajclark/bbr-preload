@@ -17,17 +17,19 @@ int socket(int domain, int type, int protocol)
   char *cong_algorithm = "bbr";
   int slen = strlen(cong_algorithm);
 
-  /* call original function with parameters */
+  /* check if we've already looked up the original socket function */
   if(!orig_socket && !(*(void **)(&orig_socket) = dlsym(RTLD_NEXT, "socket"))) {
     errno = EACCES;
   }
+
+  /* call the original socket function */
   sockfd = (*orig_socket)(domain, type, protocol);
 
   /* socket must be TCP */
-  if((type==SOCK_STREAM)) {
-    /* set BBR */
+  if((sockfd != -1 && type==SOCK_STREAM)) {
+    /* try to set BBR */
     if (setsockopt(sockfd, IPPROTO_TCP, TCP_CONGESTION, cong_algorithm, slen)<0) {
-      dlerror();
+      errno = EINVAL
     }
   }
   return sockfd;

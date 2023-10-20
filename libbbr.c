@@ -29,7 +29,7 @@ int socket(int domain, int type, int protocol)
   if((sockfd != -1 && type==SOCK_STREAM)) {
     /* try to set BBR */
     if (setsockopt(sockfd, IPPROTO_TCP, TCP_CONGESTION, cong_algorithm, slen)<0) {
-      errno = EINVAL
+      errno = EINVAL;
     }
   }
   return sockfd;
